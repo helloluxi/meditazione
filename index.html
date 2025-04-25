@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditazione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .space-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 2rem auto;
+            animation: breathe 8s infinite ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .overlay-text.visible {
+            opacity: 1;
+        }
+
+        .timer {
+            font-size: 4rem;
+            font-weight: 100;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        @keyframes breathe {
+            0% {
+                transform: scale(1);
+                border-color: rgba(255,255,255,0.2);
+                box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            }
+            50% {
+                transform: scale(1.5);
+                border-color: rgba(255,255,255,0.5);
+                box-shadow: 0 0 40px rgba(255,255,255,0.2);
+            }
+            100% {
+                transform: scale(1);
+                border-color: rgba(255,255,255,0.2);
+                box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            }
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="space-background"></div>
+        <div class="breathing-circle"></div>
+        <div class="overlay-text">
+            <div class="timer">00:00</div>
+        </div>
+    </div>
+
+    <script>
+        const timerDisplay = document.querySelector('.timer');
+        const overlayText = document.querySelector('.overlay-text');
+        const container = document.querySelector('.container');
+        let isSpacePressed = false;
+        let seconds = 0;
+        const STAR_COUNT = 60;
+        const stars = [];
+
+        function createStars() {
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                container.appendChild(star);
+                stars.push(star);
+                resetStar(star);
+            }
+        }
+
+        function resetStar(star) {
+            const size = Math.random() * 2 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            const duration = Math.random() * 4 + 8;
+            
+            star.style.animation = `twinkle ${duration}s infinite ease-in-out`;
+            star.style.animationDelay = `${Math.random() * duration}s`;
+            
+            const resetTime = (Math.random() * 20 + 40) * 1000;
+            setTimeout(() => {
+                resetStar(star);
+            }, resetTime);
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        const timer = setInterval(() => {
+            seconds++;
+            timerDisplay.textContent = formatTime(seconds);
+        }, 1000);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !isSpacePressed) {
+                e.preventDefault();
+                isSpacePressed = true;
+                overlayText.classList.add('visible');
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                isSpacePressed = false;
+                overlayText.classList.remove('visible');
+            }
+        });
+
+        createStars();
+    </script>
+</body>
+</html>
