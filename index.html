@@ -105,6 +105,171 @@
             50% { opacity: 1; }
             100% { opacity: 0; }
         }
+
+        .settings-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            min-width: 400px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-panel.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .settings-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .settings-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .settings-help {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .key-hints {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            line-height: 2;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .key-hints.hidden {
+            opacity: 0;
+        }
+
+        .key-hint {
+            display: inline-block;
+            margin: 0.2rem 0;
+        }
+
+        .key {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            padding: 0.2rem 0.5rem;
+            margin-right: 0.5rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            min-width: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .settings-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .settings-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .volume-display {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -114,16 +279,193 @@
         <div class="overlay-text">
             <div class="timer">00:00</div>
         </div>
+        <div class="key-hints" id="keyHints">
+            <div class="key-hint"><span class="key">F</span>Full Screen</div><br>
+            <div class="key-hint"><span class="key">M</span>Toggle Sound</div><br>
+            <div class="key-hint"><span class="key">Space</span>Show Timer</div><br>
+            <div class="key-hint"><span class="key">`</span>Settings</div>
+        </div>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+        <h2 class="settings-title">Settings</h2>
+        <div class="settings-group">
+            <label class="settings-label" for="soundUrl">Sound URL</label>
+            <input type="url" class="settings-input" id="soundUrl" placeholder="Link to an audio file (e.g., water stream)">
+        </div>
+        <div class="settings-group">
+            <label class="settings-label" for="volumeSlider">Volume</label>
+            <input type="range" class="settings-slider" id="volumeSlider" min="0" max="100" value="30">
+            <div class="volume-display" id="volumeDisplay">30%</div>
+        </div>
+        <div class="settings-buttons">
+            <button class="settings-btn" onclick="closeSettings()">Close</button>
+            <button class="settings-btn" onclick="testSound()">Test Sound</button>
+            <button class="settings-btn" onclick="saveSettings()">Save</button>
+        </div>
     </div>
 
     <script>
         const timerDisplay = document.querySelector('.timer');
         const overlayText = document.querySelector('.overlay-text');
         const container = document.querySelector('.container');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const soundUrlInput = document.getElementById('soundUrl');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeDisplay = document.getElementById('volumeDisplay');
+        const keyHints = document.getElementById('keyHints');
         let isSpacePressed = false;
         let seconds = 0;
         const STAR_COUNT = 60;
         const stars = [];
+        
+        // Hide key hints after 5 seconds
+        setTimeout(() => {
+            keyHints.classList.add('hidden');
+        }, 5000);
+        
+        // Audio functionality
+        let audio = null;
+        let isSoundEnabled = false;
+        let soundUrl = '';
+        let volume = 0.3;
+        
+        // Volume slider event listener
+        volumeSlider.addEventListener('input', (e) => {
+            volume = e.target.value / 100;
+            volumeDisplay.textContent = e.target.value + '%';
+            if (audio) {
+                audio.volume = volume;
+            }
+            // Update test audio volume too
+            if (testAudio) {
+                testAudio.volume = volume;
+            }
+        });
+        
+        // Load settings from localStorage
+        function loadSettings() {
+            const savedUrl = localStorage.getItem('med.soundUrl');
+            const savedVolume = localStorage.getItem('med.volume');
+            
+            if (savedUrl) {
+                soundUrl = savedUrl;
+                soundUrlInput.value = savedUrl;
+            }
+            
+            if (savedVolume) {
+                volume = parseFloat(savedVolume);
+                volumeSlider.value = Math.round(volume * 100);
+                volumeDisplay.textContent = Math.round(volume * 100) + '%';
+            }
+        }
+        
+        // Save settings to localStorage
+        function saveSettings() {
+            soundUrl = soundUrlInput.value.trim();
+            if (soundUrl) {
+                localStorage.setItem('med.soundUrl', soundUrl);
+                localStorage.setItem('med.volume', volume.toString());
+                initAudio();
+                console.log('Settings saved');
+            }
+            closeSettings();
+        }
+        
+        // Test sound functionality
+        let testAudio = null;
+        function testSound() {
+            const testUrl = soundUrlInput.value.trim();
+            if (!testUrl) {
+                alert('Please enter a sound URL first');
+                return;
+            }
+            
+            // Stop any existing test audio
+            if (testAudio) {
+                testAudio.pause();
+                testAudio.currentTime = 0;
+            } else {
+                // Create audio only once
+                testAudio = new Audio(testUrl);
+                testAudio.addEventListener('error', () => {
+                    alert('Error playing sound. Please check the URL.');
+                    console.log('Test sound error');
+                });
+            }
+            
+            // Update volume and URL if changed
+            testAudio.src = testUrl;
+            testAudio.volume = volume;
+            
+            testAudio.play().then(() => {
+                console.log('Test sound playing');
+                setTimeout(() => {
+                    if (testAudio) {
+                        testAudio.pause();
+                        testAudio.currentTime = 0;
+                    }
+                    console.log('Test sound stopped');
+                }, 5000);
+            }).catch(err => {
+                alert('Error playing sound. Please check the URL.');
+                console.log('Test sound error:', err);
+            });
+        }
+        
+        // Initialize audio
+        function initAudio() {
+            if (!soundUrl) return;
+            
+            if (audio) {
+                audio.pause();
+            }
+            
+            // Only create new audio if URL changed or audio doesn't exist
+            if (!audio || audio.src !== soundUrl) {
+                audio = new Audio(soundUrl);
+                audio.loop = true;
+                audio.addEventListener('error', () => {
+                    console.log('Error loading audio from:', soundUrl);
+                    alert('Error loading audio. Please check the URL in settings.');
+                });
+            }
+            
+            audio.volume = volume;
+        }
+        
+        function toggleSound() {
+            if (!soundUrl) {
+                // No sound configured, open settings
+                toggleSettings();
+                return;
+            }
+            
+            if (!audio) {
+                initAudio();
+            }
+            
+            if (isSoundEnabled) {
+                audio.pause();
+                isSoundEnabled = false;
+                console.log('Sound disabled');
+            } else {
+                audio.play().catch(err => {
+                    console.log('Error playing audio:', err);
+                    alert('Error playing audio. Please check the URL in settings.');
+                });
+                isSoundEnabled = true;
+                console.log('Sound enabled');
+            }
+        }
+        
+        function toggleSettings() {
+            settingsPanel.classList.toggle('visible');
+        }
+        
+        function closeSettings() {
+            settingsPanel.classList.remove('visible');
+        }
 
         function createStars() {
             for (let i = 0; i < STAR_COUNT; i++) {
@@ -165,6 +507,11 @@
         }, 1000);
 
         document.addEventListener('keydown', (e) => {
+            // Don't process shortcuts if settings panel is open (except backtick)
+            if (settingsPanel.classList.contains('visible') && e.code !== 'Backquote') {
+                return;
+            }
+            
             if (e.code === 'Space' && !isSpacePressed) {
                 e.preventDefault();
                 isSpacePressed = true;
@@ -173,6 +520,11 @@
         });
 
         document.addEventListener('keyup', (e) => {
+            // Don't process shortcuts if settings panel is open (except backtick)
+            if (settingsPanel.classList.contains('visible') && e.code !== 'Backquote') {
+                return;
+            }
+            
             if (e.code === 'Space') {
                 isSpacePressed = false;
                 overlayText.classList.remove('visible');
@@ -181,6 +533,11 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.code === 'KeyF') {
+                // Don't process if settings panel is open
+                if (settingsPanel.classList.contains('visible')) {
+                    return;
+                }
+                
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen().catch(err => {
                         console.log(`Error attempting to enable fullscreen: ${err.message}`);
@@ -191,7 +548,32 @@
                     }
                 }
             }
+            
+            if (e.code === 'KeyM') {
+                // Don't process if settings panel is open
+                if (settingsPanel.classList.contains('visible')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                toggleSound();
+            }
+            
+            if (e.code === 'Backquote') { // Backtick key - always works
+                e.preventDefault();
+                toggleSettings();
+            }
         });
+        
+        // Handle Enter key in settings input
+        soundUrlInput.addEventListener('keydown', (e) => {
+            if (e.code === 'Enter') {
+                saveSettings();
+            }
+        });
+        
+        // Load settings and initialize
+        loadSettings();
 
         createStars();
     </script>
