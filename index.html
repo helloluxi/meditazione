@@ -199,13 +199,13 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
             z-index: 10;
-            text-align: center;
+            text-align: left;
             opacity: 1;
-            transition: opacity 1s ease;
-            pointer-events: none;
+            transition: opacity 0.3s ease;
+            pointer-events: auto;
             line-height: 2;
             background: rgba(0, 0, 0, 0.3);
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.5rem 1rem 1.5rem;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -213,6 +213,34 @@
 
         .key-hints.hidden {
             opacity: 0;
+        }
+
+        .key-hints-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            padding: 0;
+            outline: none;
+            line-height: 1;
+        }
+
+        .key-hints-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
         }
 
         .key-hint {
@@ -280,10 +308,11 @@
             <div class="timer">00:00</div>
         </div>
         <div class="key-hints" id="keyHints">
+            <button class="key-hints-close" onclick="closeKeyHints()" title="Close hints">x</button>
+            <div class="key-hint"><span class="key">`</span>Settings</div><br>
             <div class="key-hint"><span class="key">F</span>Full Screen</div><br>
             <div class="key-hint"><span class="key">M</span>Toggle Sound</div><br>
-            <div class="key-hint"><span class="key">Space</span>Show Timer</div><br>
-            <div class="key-hint"><span class="key">`</span>Settings</div>
+            <div class="key-hint"><span class="key">Space</span>Show Timer</div>
         </div>
     </div>
 
@@ -319,10 +348,19 @@
         const STAR_COUNT = 60;
         const stars = [];
         
-        // Hide key hints after 5 seconds
-        setTimeout(() => {
+        // Check if user wants hints hidden
+        function checkHintsPreference() {
+            const hideHints = localStorage.getItem('med.nohints');
+            if (hideHints === 'true') {
+                keyHints.classList.add('hidden');
+            }
+        }
+        
+        // Close key hints and save preference
+        function closeKeyHints() {
             keyHints.classList.add('hidden');
-        }, 5000);
+            localStorage.setItem('med.nohints', 'true');
+        }
         
         // Audio functionality
         let audio = null;
@@ -574,6 +612,7 @@
         
         // Load settings and initialize
         loadSettings();
+        checkHintsPreference();
 
         createStars();
     </script>
